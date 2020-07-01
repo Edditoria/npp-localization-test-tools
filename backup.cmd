@@ -10,7 +10,7 @@ if "%OS%"=="Windows_NT" set "nul="
 set "nativelang_dir=%USERPROFILE%\AppData\Roaming\Notepad++\"
 set "nativelang_file=nativeLang.xml"
 set "nativelang_full_path=%nativelang_dir%%nativelang_file%"
-set "backup_dir=%nativelang_dir%\backup\"
+set "backup_dir=%nativelang_dir%backup\"
 
 
 :: Health check
@@ -29,11 +29,9 @@ if not exist "%backup_dir%%nul%" (
 )
 
 
-:: Temp Output
+:: Backup nativeLang.xml
 
 echo.
-echo Doing: echo %%nativelang_full_path%%
-echo %nativelang_full_path%
+copy /-y /v "%nativelang_full_path%" "%backup_dir%"
 echo.
-echo Doing: dir %%backup_dir%%
 dir %backup_dir% /w
