@@ -5,13 +5,17 @@ set "nul=nul"
 if "%OS%"=="Windows_NT" set "nul="
 
 :: Set variables
-set "npp_lang_dir=%USERPROFILE%\AppData\Roaming\Notepad++"
-set "npp_lang_file=nativeLang.xml"
-set "npp_lang_path=%npp_lang_dir%\%npp_lang_file%"
+
+set "nativelang_dir=%USERPROFILE%\AppData\Roaming\Notepad++\"
+set "nativelang_file=nativeLang.xml"
+set "nativelang_full_path=%nativelang_dir%%nativelang_file%"
+set "backup_dir=%nativelang_dir%\backup\"
+
+:: Temp Output
 
 echo.
-echo Doing: echo %%npp_lang_path%%
-echo %npp_lang_path%
+echo Doing: echo %%nativelang_full_path%%
+echo %nativelang_full_path%
 echo.
-echo Doing: dir %%npp_lang_dir%%
-dir %npp_lang_dir% /w
+echo Doing: dir %%backup_dir%%
+dir %backup_dir% /w
