@@ -28,6 +28,11 @@ if not exist "%src%" (
 	echo [error] File not found!
 	exit /b 1
 )
+set "user_input_file_ext=%user_input:~-4%"
+if not "%user_input_file_ext%"==".xml" (
+	echo [error] Not a .xml file
+	exit /b 1
+)
 
 
 :: Copy nativeLang.xml
