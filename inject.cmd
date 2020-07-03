@@ -9,20 +9,29 @@ if "%OS%"=="Windows_NT" set "nul="
 
 set "pwd=%cd%"
 set "user_input=%~1"
-set "file_full_path=%pwd%\%user_input%"
+set "src=%pwd%\%user_input%"
+set "nativelang_dir=%USERPROFILE%\AppData\Roaming\Notepad++\"
+set "nativelang_filename=nativeLang.xml"
+set "dest=%nativelang_dir%%nativelang_filename%"
+
+:: Health check
 
 if "[%user_input%]"=="[]" (
 	echo [error] Missing user argument
 	exit /b 1
 )
-:: else
-echo.
-echo Full path of user input:
-echo %file_full_path%
-echo.
-
-if exist "%file_full_path%" (
-	echo [success] File is found!
-) else (
-	echo [error] File not found!
+if exist "%user_input%\*" (
+	echo [error] It is a directory
+	exit /b 1
 )
+if not exist "%src%" (
+	echo [error] File not found!
+	exit /b 1
+)
+
+
+:: Copy nativeLang.xml
+
+echo.
+copy /y /v "%src%" "%dest%"
+echo [done]
