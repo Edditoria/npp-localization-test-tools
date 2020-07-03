@@ -33,5 +33,15 @@ if not exist "%src%" (
 :: Copy nativeLang.xml
 
 echo.
+echo It will overwrite existing nativeLang.xml in Notepad++.
+set /p "start_copy=Are you sure? (type [y] to continue) "
+if "%start_copy%"=="y" goto confirm_pass
+:: else
+echo.
+echo [error] This script will continue only if you answer "y"
+exit /b 1
+
+:confirm_pass
+echo.
 copy /y /v "%src%" "%dest%"
 echo [done]
