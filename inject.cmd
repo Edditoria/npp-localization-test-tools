@@ -39,6 +39,8 @@ if not "%user_input_file_ext%"==".xml" (
 
 echo.
 echo It will overwrite existing nativeLang.xml in Notepad++.
+echo Source: %src%
+echo Destination: %dest%
 set /p "start_copy=Are you sure? (type [y] to continue) "
 if "%start_copy%"=="y" goto confirm_pass
 :: else
@@ -49,4 +51,4 @@ exit /b 1
 :confirm_pass
 echo.
 copy /y /v "%src%" "%dest%"
-echo [done]
+echo [done] Please restart Notepad++ to take effect
