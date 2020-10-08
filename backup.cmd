@@ -7,10 +7,11 @@ if "%OS%"=="Windows_NT" set "nul="
 
 :: Set variables
 
+set "pwd=%cd%"
 set "nativelang_dir=%USERPROFILE%\AppData\Roaming\Notepad++\"
 set "nativelang_file=nativeLang.xml"
 set "nativelang_full_path=%nativelang_dir%%nativelang_file%"
-set "backup_dir=%nativelang_dir%backup\"
+set "backup_dir=%cd%\backup\"
 
 
 :: Health check
