@@ -1,6 +1,18 @@
+# note: Remember to update .editorconfig for new changes
+
 * text=auto
 
 *.xml text eol=crlf
+
 *.bat text eol=crlf
-*.md text eol=lf
+*.cmd text eol=crlf
+*.ps1 text eol=crlf
+*.ini text eol=crlf
+
 *.png binary
+
+# exclude files from exporting
+
+.gitattributes export-ignore
+.gitignore export-ignore
+.gitkeep export-ignore
