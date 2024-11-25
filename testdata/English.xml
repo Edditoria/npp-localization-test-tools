@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!--
+Translation note:
+1. Please install XML Tools plugin for formatting your XML translation. Via menu "Plugins -> XML Tools-> Pretty Print - indent only" command.
+2. All the comments are for explanation, they are not for translation.
+-->
+<NotepadPlus>
+	<Native-Langue name="English" filename="english.xml" version="8.6.9">
+		<Menu>
+			<Main>
+				<!-- Main Menu Entries -->
+				<Entries>
+					<Item menuId="file" name="&amp;File"/>
+					<Item menuId="edit" name="&amp;Edit"/>
+					<Item menuId="search" name="&amp;Search"/>
+					<Item menuId="view" name="&amp;View"/>
+					<Item menuId="encoding" name="E&amp;ncoding"/>
+					<Item menuId="language" name="&amp;Language"/>
+					<Item menuId="settings" name="Se&amp;ttings"/>
+					<Item menuId="tools" name="To&amp;ols"/>
+					<Item menuId="macro" name="&amp;Macro"/>
+					<Item menuId="run" name="&amp;Run"/>
+					<Item menuId="Plugins" name="&amp;Plugins"/>
+					<Item menuId="Window" name="&amp;Window"/>
+				</Entries>
+			</Main>
+		</Menu>
+	</Native-Langue>
+</NotepadPlus>
