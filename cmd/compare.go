@@ -5,34 +5,13 @@ import (
 	"fmt"
 	"io"
 	"os"
-	"strings"
 )
 
-type DiffType = int
-
-const (
-	DiffPassed DiffType = iota
-	DiffAdded
-	DiffMissing
-	DiffAttr
-)
-
-type Node struct {
-	Xpath string
-	Name  xml.Name
-	Attrs []xml.Attr
-	// Value    xml.CharData
-	// Children []*Node
+type Doc struct {
+	Root *Node
 }
 
-type DiffRecord struct {
-	Type      DiffType
-	Xpath     string
-	NodeLeft  *Node
-	NodeRight *Node
-}
-
-func ReadXml(filepath string, nodes *[]Node) error {
+func (doc *Doc) ReadXml(filepath string) error {
 	file, err := os.Open(filepath)
 	if err != nil {
 		return err
@@ -41,7 +20,7 @@ func ReadXml(filepath string, nodes *[]Node) error {
 
 	// For each element, write to `nodes`.
 	decoder := xml.NewDecoder(file)
-	paths := []string{}
+	parentNode := doc.Root
 	for {
 		token, err := decoder.Token()
 		// Handling EOF before looping tokens:
@@ -56,18 +35,48 @@ func ReadXml(filepath string, nodes *[]Node) error {
 
 		switch t := token.(type) {
 		case xml.StartElement:
-			paths = append(paths, t.Name.Local)
-			thisXpath := "/" + strings.Join(paths, "/")
 			thisNode := Node{
-				Xpath: thisXpath,
-				Name:  t.Name,
+				Name:   t.Name,
+				Attrs:  t.Attr,
+				Parent: parentNode,
 			}
-			thisNode.Attrs = t.Attr
-			*nodes = append(*nodes, thisNode)
+			if parentNode == nil {
+				// fmt.Println("I am root. I only occur once.")
+				doc.Root = &thisNode
+				parentNode = &thisNode
+			} else {
+				parentNode.Children = append(parentNode.Children, &thisNode)
+				parentNode = &thisNode
+			}
 		case xml.EndElement:
-			paths = paths[:len(paths)-1]
+			parentNode = parentNode.Parent
 		}
 	}
 
 	return nil
+}
+
+type Node struct {
+	Name     xml.Name
+	Attrs    []xml.Attr
+	Children []*Node
+	Parent   *Node
+	// Xpath    string
+	// Value    xml.CharData
+}
+
+type DiffType = int
+
+const (
+	DiffPassed DiffType = iota
+	DiffAdded
+	DiffMissing
+	DiffAttr
+)
+
+type DiffRecord struct {
+	Type      DiffType
+	Xpath     string
+	NodeLeft  *Node
+	NodeRight *Node
 }
