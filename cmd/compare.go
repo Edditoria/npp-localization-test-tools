@@ -65,7 +65,7 @@ type Node struct {
 	// Value    xml.CharData
 }
 
-type DiffType = int
+type DiffType int
 
 const (
 	DiffPassed DiffType = iota
