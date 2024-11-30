@@ -5,16 +5,22 @@ import (
 	"fmt"
 	"io"
 	"os"
+	"strconv"
 )
+
+type Cfg struct {
+	KeysHaveEqualVal []string
+}
 
 type Doc struct {
 	Root *Node
 }
 
-func (doc *Doc) ReadXml(filepath string) error {
+func ReadFromFile(filepath string) (Doc, error) {
+	var doc Doc
 	file, err := os.Open(filepath)
 	if err != nil {
-		return err
+		return doc, err
 	}
 	defer file.Close()
 
@@ -53,14 +59,14 @@ func (doc *Doc) ReadXml(filepath string) error {
 		}
 	}
 
-	return nil
+	return doc, nil
 }
 
 type Node struct {
 	Name     xml.Name
 	Attrs    []xml.Attr
 	Children []*Node
-	Parent   *Node
+	Parent   *Node // For reference only. May need to update if the etree changes.
 	// Xpath    string
 	// Value    xml.CharData
 }
@@ -76,7 +82,28 @@ const (
 
 type DiffRecord struct {
 	Type      DiffType
-	Xpath     string
+	Dirs      Dirs
 	NodeLeft  *Node
 	NodeRight *Node
+}
+
+type Dir struct {
+	Node     *Node
+	Position int
+}
+
+type Dirs []Dir
+
+func (d Dirs) Xpath() string {
+	o := "//"
+	for _, dir := range d {
+		o = o + dir.Node.Name.Local + "[" + strconv.Itoa(dir.Position) + "]"
+	}
+	return o
+}
+
+func Compare(baseDoc, userDoc *Doc, cfg Cfg) []DiffRecord {
+	var diffs []DiffRecord
+	// todo...
+	return diffs
 }

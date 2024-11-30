@@ -18,11 +18,20 @@ func printAll_test(node *cmd.Node) {
 }
 
 func main() {
+	userFile := "./testdata/HongKongCantonese.xml"
 	baseFile := "./testdata/English.xml"
-	var baseDoc cmd.Doc
-	if err := baseDoc.ReadXml(baseFile); err != nil {
+	cfg := cmd.Cfg{KeysHaveEqualVal: []string{"menuId"}}
+
+	userDoc, err := cmd.ReadFromFile(userFile)
+	if err != nil {
+		panic(err)
+	}
+	printAll_test(userDoc.Root)
+
+	baseDoc, err := cmd.ReadFromFile(baseFile)
+	if err != nil {
 		panic(err)
 	}
 	printAll_test(baseDoc.Root)
-
+	cmd.Compare(&baseDoc, &userDoc, cfg)
 }
