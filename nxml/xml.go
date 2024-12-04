@@ -1,4 +1,4 @@
-package cmd
+package nxml
 
 import (
 	"encoding/xml"
@@ -90,6 +90,10 @@ type DiffRecord struct {
 type Dir struct {
 	Node     *Node
 	Position int
+}
+
+func (d Dir) AsString() string {
+	return fmt.Sprintf("%s[%v]", d.Node.Name.Local, d.Position)
 }
 
 type Dirs []Dir

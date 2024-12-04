@@ -2,10 +2,10 @@ package main
 
 import (
 	"fmt"
-	"npptt/cmd"
+	"npptt/nxml"
 )
 
-func printAll_test(node *cmd.Node) {
+func printAll_test(node *nxml.Node) {
 	fmt.Print(node.Name.Space, node.Name.Local, node.Attrs)
 	if len(node.Children) > 0 {
 		fmt.Printf(" : %v\n", len(node.Children))
@@ -20,18 +20,18 @@ func printAll_test(node *cmd.Node) {
 func main() {
 	userFile := "./testdata/HongKongCantonese.xml"
 	baseFile := "./testdata/English.xml"
-	cfg := cmd.Cfg{KeysHaveEqualVal: []string{"menuId"}}
+	cfg := nxml.Cfg{KeysHaveEqualVal: []string{"menuId"}}
 
-	userDoc, err := cmd.ReadFromFile(userFile)
+	userDoc, err := nxml.ReadFromFile(userFile)
 	if err != nil {
 		panic(err)
 	}
 	printAll_test(userDoc.Root)
 
-	baseDoc, err := cmd.ReadFromFile(baseFile)
+	baseDoc, err := nxml.ReadFromFile(baseFile)
 	if err != nil {
 		panic(err)
 	}
 	printAll_test(baseDoc.Root)
-	cmd.Compare(&baseDoc, &userDoc, cfg)
+	nxml.Compare(&baseDoc, &userDoc, cfg)
 }
