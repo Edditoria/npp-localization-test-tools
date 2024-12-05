@@ -8,15 +8,45 @@ import (
 	"strconv"
 )
 
-type Cfg struct {
-	KeysHaveEqualVal []string
-}
-
 type Doc struct {
+	// Just normal node but parent is nil.
 	Root *Node
 }
 
-func ReadFromFile(filepath string) (Doc, error) {
+type Node struct {
+	Name     xml.Name
+	Attrs    []xml.Attr
+	Children []*Node
+	Parent   *Node // Cache. May need to update when the etree changes.
+	// Path     string
+	// Value    xml.CharData
+}
+
+func (n *Node) Xdir() string {
+	pos := n.Xposition()
+	return n.Name.Local + "[" + strconv.FormatInt(pos, 10) + "]"
+}
+
+// Get position under the same element name. Compatible to XPath.
+// According to W3C, position starts from 1.
+func (n *Node) Xposition() int64 {
+	var count int64 = 0
+	if n.Parent == nil {
+		return 1
+	}
+	for _, elm := range n.Children {
+		if elm == n {
+			count++
+			break
+		}
+		if elm.Name.Local == n.Name.Local {
+			count++
+		}
+	}
+	return count
+}
+
+func NewFromFile(filepath string) (Doc, error) {
 	var doc Doc
 	file, err := os.Open(filepath)
 	if err != nil {
@@ -26,7 +56,8 @@ func ReadFromFile(filepath string) (Doc, error) {
 
 	// For each element, write to `nodes`.
 	decoder := xml.NewDecoder(file)
-	parentNode := doc.Root
+	var parent *Node
+	var position int
 	for {
 		token, err := decoder.Token()
 		// Handling EOF before looping tokens:
@@ -42,72 +73,28 @@ func ReadFromFile(filepath string) (Doc, error) {
 		switch t := token.(type) {
 		case xml.StartElement:
 			thisNode := Node{
-				Name:   t.Name,
-				Attrs:  t.Attr,
-				Parent: parentNode,
+				Name:  t.Name,
+				Attrs: t.Attr,
 			}
-			if parentNode == nil {
+			if parent == nil {
 				// fmt.Println("I am root. I only occur once.")
+				thisNode.Parent = Dir{Node: nil, Position: 0}
 				doc.Root = &thisNode
-				parentNode = &thisNode
+				parent = &thisNode
+				position = 0
 			} else {
-				parentNode.Children = append(parentNode.Children, &thisNode)
-				parentNode = &thisNode
+				thisNode.Parent = Dir{Node: parent, Position: position}
+				parent.Children = append(parent.Children, &thisNode)
+				parent = &thisNode
+				position = 0
 			}
 		case xml.EndElement:
-			parentNode = parentNode.Parent
+			parent = parent.Parent.Node
+			if parent != nil {
+				position = len(parent.Children)
+			}
 		}
 	}
 
 	return doc, nil
-}
-
-type Node struct {
-	Name     xml.Name
-	Attrs    []xml.Attr
-	Children []*Node
-	Parent   *Node // For reference only. May need to update if the etree changes.
-	// Xpath    string
-	// Value    xml.CharData
-}
-
-type DiffType int
-
-const (
-	DiffPassed DiffType = iota
-	DiffAdded
-	DiffMissing
-	DiffAttr
-)
-
-type DiffRecord struct {
-	Type      DiffType
-	Dirs      Dirs
-	NodeLeft  *Node
-	NodeRight *Node
-}
-
-type Dir struct {
-	Node     *Node
-	Position int
-}
-
-func (d Dir) AsString() string {
-	return fmt.Sprintf("%s[%v]", d.Node.Name.Local, d.Position)
-}
-
-type Dirs []Dir
-
-func (d Dirs) Xpath() string {
-	o := "//"
-	for _, dir := range d {
-		o = o + dir.Node.Name.Local + "[" + strconv.Itoa(dir.Position) + "]"
-	}
-	return o
-}
-
-func Compare(baseDoc, userDoc *Doc, cfg Cfg) []DiffRecord {
-	var diffs []DiffRecord
-	// todo...
-	return diffs
 }
